@@ -4,13 +4,12 @@
   (:import  (java.util   Locale)))
 
 (deftest test-translate
-  (let [resource-bundle (resource-bundle "dog-mission.message" (Locale. "ja" "JP"))]
-    (is (= "今日は、世界！" (translate resource-bundle :hello-world)))
-    (is (= "hello-world-2"  (translate resource-bundle :hello-world-2))))
-  (let [resource-bundles [(resource-bundle "dog-mission.message"   (Locale. "ja" "JP"))
-                          (resource-bundle "dog-mission.message-2" (Locale. "ja" "JP"))]]
-    (is (= "今日は、世界！"       (translate resource-bundles :hello-world)))
-    (is (= "こんにちは、せかい！" (translate resource-bundles :hello-world-2)))
-    (is (= "hello-world-3"        (translate resource-bundles :hello-world-3))))
-  (let [resource-bundle (resource-bundle "dog-mission.message" (Locale. "ja" "JP"))]
-    (is (= "today is a beautiful day!" (translate resource-bundle :hello "beautiful" "today")))))
+  (conj-resource-bundle-namespace "dog-mission.message")
+  (is (= "今日は、世界！"            (translate (Locale. "ja") :hello-world)))
+  (is (= :hello-world-2              (translate (Locale. "ja") :hello-world-2)))
+  (is (= "today is a beautiful day!" (translate (Locale. "ja") :hello "beautiful" "today")))
+  
+  (conj-resource-bundle-namespace "dog-mission.message-2")
+  (is (= "今日は、世界！"            (translate (Locale. "ja") :hello-world)))
+  (is (= "こんにちは、せかい！"      (translate (Locale. "ja") :hello-world-2)))
+  (is (= :hello-world-3              (translate (Locale. "ja") :hello-world-3))))

@@ -14,19 +14,27 @@
                                    (.getResourceAsStream class-loader resource-name))]
           (PropertyResourceBundle. (BufferedReader. (InputStreamReader. input-stream "UTF-8"))))))))
 
-(defn resource-bundle
+(defn- resource-bundle
   [namespace-string locale]
-  (ResourceBundle/getBundle (string/replace namespace-string \- \_) locale utf-8-encoding-control))
+  (ResourceBundle/getBundle namespace-string locale utf-8-encoding-control))
+
+(def ^:private resource-bundle-namespaces
+  (atom nil))
+
+(defn conj-resource-bundle-namespace
+  [& namespace-strings]
+  (swap! resource-bundle-namespaces #(concat (map (fn [namespace-string] (string/replace namespace-string \- \_)) namespace-strings)  ; TODO: 「!」とか「?」とか「'」とかについても考える？
+                                             %)))
 
 (defn translate
-  ([resource-bundles message-key]
-   (let [message (name message-key)]
-     (letfn [(translate' [resource-bundle]
-               (if (.containsKey resource-bundle message)
-                 (.getString resource-bundle message)))]
-       (or (some translate'
-                 (cond-> resource-bundles
-                   (not (coll? resource-bundles)) (vector resource-bundles)))
-           message))))
-  ([resource-bundles message-key & format-arguments]
-   (apply format (translate resource-bundles message-key) format-arguments)))
+  ([locale message-key]
+   (let [key ((if (instance? clojure.lang.Named message-key)
+                name
+                str)
+              message-key)]
+     (or (->> @resource-bundle-namespaces
+              (map #(resource-bundle % locale))
+              (some #(and (.containsKey % key) (.getString % key))))
+         message-key)))
+  ([locale message-key & format-arguments]
+   (apply format (translate locale message-key) format-arguments)))

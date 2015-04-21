@@ -1,13 +1,13 @@
 # dog-mission
 
-Easy i18n library for Clojure. Just wrap the Java ResourceBundle.
+Easy i18n library for Clojure. It's a Java ResourceBundle wrapper...
 
 ## Usage
 
 Add following to your <code>project.clj</code>.
 
 ```clojure
-[com.tail-island/twin-spar "0.1.0"]
+[com.tail-island/dog-mission "0.1.0"]
 ```
 
 Create properties file with UTF-8 encoding.
@@ -25,11 +25,10 @@ Translate message like below code.
 (ns your-name-space-1.core
   (:require (dog-mission [core :as dog-mission])))
 
-(def resource-bundle
-  (dog-mission/resource-bundle "your-name-space-1.your-name-space-2" (Locale "en" "US")))
+(conj-resource-bundle-namespace "your-name-space-1.your-name-space-2")
 
-(println (dog-mission/translate resource-bundle :hello-world))
-(println (dog-mission/translate resource-bundle :has-format-message "beautiful" "today"))
+(println (dog-mission/translate (Locale "en" "US") :hello-world))
+(println (dog-mission/translate (Locale "en" "US") :has-format-message "beautiful" "today"))
 ```
 
 ## License
