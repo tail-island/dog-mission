@@ -3,11 +3,9 @@
             (clj-time      [coerce :as time.coerce]))
   (:import  (clojure.lang  BigInt Ratio)
             (java.io       InputStreamReader BufferedReader)
-            (java.lang     Long Double)
-            (java.math     BigDecimal)
             (java.text     DateFormat NumberFormat)
-            (java.util     Locale MissingResourceException Properties PropertyResourceBundle ResourceBundle ResourceBundle$Control TimeZone)
-            (org.joda.time DateTime LocalDateTime)))
+            (java.util     Locale PropertyResourceBundle ResourceBundle ResourceBundle$Control TimeZone)
+            (org.joda.time DateTime)))
 
 (def ^:dynamic *locale*
   (Locale/getDefault))
