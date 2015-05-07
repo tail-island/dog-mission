@@ -1,7 +1,7 @@
 (ns dog-mission.core
   (:require (clojure       [string :as string])
             (clj-time      [coerce :as time.coerce]))
-  (:import  (clojure.lang  BigInt Ratio)
+  (:import  (clojure.lang  BigInt Compiler Ratio)
             (java.io       InputStreamReader BufferedReader)
             (java.text     DateFormat NumberFormat)
             (java.util     Locale PropertyResourceBundle ResourceBundle ResourceBundle$Control TimeZone)
@@ -18,7 +18,7 @@
 
 (defn conj-resource-bundle-namespace
   [& namespace-strings]
-  (swap! resource-bundle-namespaces #(concat (map (fn [namespace-string] (string/replace namespace-string \- \_)) namespace-strings)  ; TODO: 「!」とか「?」とか「'」とかについても考える？
+  (swap! resource-bundle-namespaces #(concat (map (fn [namespace-string] (Compiler/munge namespace-string)) namespace-strings)
                                              %)))
 
 (def ^:private utf-8-encoding-control
