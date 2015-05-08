@@ -36,37 +36,48 @@
   []
   (map #(ResourceBundle/getBundle % *locale* utf-8-encoding-control) @resource-bundle-namespaces))
 
+(defn number-format
+  []
+  (NumberFormat/getInstance *locale*))
+
+(defn date-format
+  []
+  (doto (DateFormat/getDateInstance DateFormat/MEDIUM *locale*)
+    (.setTimeZone *time-zone*)))
+
+(defn date-time-format
+  []
+  (doto (DateFormat/getDateTimeInstance DateFormat/MEDIUM DateFormat/MEDIUM *locale*)
+    (.setTimeZone *time-zone*)))
+
 (defprotocol L10nFormat
   (l10n-format [this]))
 
 (extend-protocol L10nFormat
   DateTime
   (l10n-format [this]
-    (-> (doto (DateFormat/getDateTimeInstance DateFormat/MEDIUM DateFormat/MEDIUM *locale*)
-          (.setTimeZone *time-zone*))
-        (.format (time.coerce/to-date this))))
+    (.format (date-time-format) (time.coerce/to-date this)))
   BigDecimal
   (l10n-format [this]
-    (-> (doto (NumberFormat/getInstance *locale*)
-          (.setMaximumFractionDigits (.scale this))
-          (.setMinimumFractionDigits (.scale this)))
-        (.format this)))
+    (.format (doto (number-format)
+               (.setMaximumFractionDigits (.scale this))
+               (.setMinimumFractionDigits (.scale this)))
+             this))
   BigInt
   (l10n-format [this]
-    (-> (NumberFormat/getInstance *locale*)
-        (.format (.toBigInteger this))))
+    (.format (number-format) (.toBigInteger this)))
   Long
   (l10n-format [this]
-    (-> (NumberFormat/getInstance *locale*)
-        (.format this)))
+    (.format (number-format) this))
   Double
   (l10n-format [this]
-     (-> (NumberFormat/getInstance *locale*)
-         (.format this)))
+     (.format (number-format) this))
   Ratio
   (l10n-format [this]
-    (-> (NumberFormat/getInstance *locale*)
-        (.format (.doubleValue this)))))
+    (.format (number-format) (.doubleValue this)))
+  String
+  (l10n-format [this]
+    this))
 
 (defn translate
   ([x]
