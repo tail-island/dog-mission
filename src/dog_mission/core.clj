@@ -4,14 +4,17 @@
   (:import  (clojure.lang  BigInt Compiler Ratio)
             (java.io       InputStreamReader BufferedReader)
             (java.text     DateFormat NumberFormat)
-            (java.util     Locale PropertyResourceBundle ResourceBundle ResourceBundle$Control TimeZone)
-            (org.joda.time DateTime)))
+            (java.util     Locale PropertyResourceBundle ResourceBundle ResourceBundle$Control TimeZone UUID)
+            (org.joda.time DateTime DateTimeZone)))
 
 (def ^:dynamic *locale*
   (Locale/getDefault))
 
 (def ^:dynamic *time-zone*
   (TimeZone/getDefault))
+
+(def ^:dynamic *joda-time-zone*
+  (DateTimeZone/getDefault))
 
 (def ^:private resource-bundle-namespaces
   (atom nil))
@@ -75,6 +78,9 @@
   Ratio
   (l10n-format [this]
     (.format (number-format) (.doubleValue this)))
+  UUID
+  (l10n-format [this]
+    (str this))
   String
   (l10n-format [this]
     this))
